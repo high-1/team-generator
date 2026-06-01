@@ -6,51 +6,65 @@
 <title>Team Generator</title>
 <style>
   :root {
-    --bg: #f7f8fa;
+    --bg: #f4f5f9;
+    --bg2: #eaecf4;
     --card: #ffffff;
-    --ink: #1a1d23;
-    --muted: #6b7280;
-    --line: #e5e7eb;
+    --ink: #15171d;
+    --muted: #71778a;
+    --line: #e8eaf1;
+    --line-strong: #d9dce6;
     --accent: #4f46e5;
-    --accent-soft: #eef2ff;
-    --radius: 14px;
-    --shadow: 0 1px 2px rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.06);
+    --accent-2: #7c6cf5;
+    --accent-soft: #ecebfe;
+    --radius: 18px;
+    --radius-sm: 12px;
+    --shadow-sm: 0 1px 2px rgba(20,24,45,.05);
+    --shadow: 0 2px 6px rgba(20,24,45,.05), 0 14px 34px rgba(20,24,45,.07);
+    --shadow-lg: 0 10px 20px rgba(20,24,45,.09), 0 28px 56px rgba(20,24,45,.13);
+    --ease-spring: cubic-bezier(.22, 1, .36, 1);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
-    background: var(--bg);
+    min-height: 100vh;
     color: var(--ink);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    background:
+      radial-gradient(1100px 520px at 50% -8%, #ffffff 0%, var(--bg) 58%, var(--bg2) 100%) fixed;
   }
   .wrap {
-    max-width: 920px;
+    max-width: 940px;
     margin: 0 auto;
-    padding: 48px 24px 80px;
+    padding: 56px 24px 90px;
   }
   header.top {
     text-align: center;
-    margin-bottom: 36px;
+    margin-bottom: 40px;
   }
   header.top h1 {
-    font-size: 30px;
-    font-weight: 650;
-    letter-spacing: -0.02em;
-    margin: 0 0 6px;
+    font-size: 34px;
+    font-weight: 680;
+    letter-spacing: -0.03em;
+    margin: 0 0 8px;
+    background: linear-gradient(118deg, #1c1e26 12%, #4f46e5 96%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   header.top p {
     margin: 0;
     color: var(--muted);
-    font-size: 15px;
+    font-size: 15.5px;
   }
   .panel {
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: 22px;
+    padding: 24px;
     margin-bottom: 20px;
   }
   .row {
@@ -59,165 +73,204 @@
     align-items: center;
     flex-wrap: wrap;
   }
-  .row + .row { margin-top: 14px; }
   label.lbl {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12.5px;
+    font-weight: 650;
     color: var(--muted);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
   select, input[type="number"], input[type="text"], button, textarea {
     font-family: inherit;
-    font-size: 14px;
+    font-size: 14.5px;
     color: var(--ink);
   }
   select, input[type="number"], input[type="text"] {
-    padding: 9px 12px;
-    border: 1px solid var(--line);
-    border-radius: 9px;
+    padding: 10px 13px;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
     background: #fff;
     outline: none;
-    transition: border-color .15s, box-shadow .15s;
+    transition: border-color .18s, box-shadow .18s;
   }
   select:focus, input:focus, textarea:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
+    box-shadow: 0 0 0 4px var(--accent-soft);
   }
   .list-controls select { flex: 1; min-width: 180px; }
   .icon-btn {
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong);
     background: #fff;
-    border-radius: 9px;
-    padding: 9px 12px;
+    border-radius: 10px;
+    padding: 10px 14px;
     cursor: pointer;
+    font-weight: 550;
     color: var(--muted);
-    transition: background .15s, color .15s, border-color .15s;
+    transition: background .18s, color .18s, border-color .18s, transform .05s;
     white-space: nowrap;
   }
-  .icon-btn:hover { background: var(--bg); color: var(--ink); }
+  .icon-btn:hover { background: #fafbff; color: var(--ink); border-color: var(--accent); }
+  .icon-btn:active { transform: translateY(1px); }
   textarea {
     width: 100%;
-    min-height: 170px;
-    padding: 12px 14px;
-    border: 1px solid var(--line);
-    border-radius: 11px;
+    min-height: 180px;
+    padding: 14px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
     resize: vertical;
     outline: none;
-    line-height: 1.7;
+    line-height: 1.75;
+    transition: border-color .18s, box-shadow .18s;
   }
   .count-hint {
     font-size: 13px;
     color: var(--muted);
-    margin-top: 8px;
+    margin-top: 10px;
+  }
+  .options-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
   }
   .mode-toggle {
     display: inline-flex;
     background: var(--bg);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 3px;
-    gap: 3px;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
   }
   .mode-toggle button {
     border: none;
     background: transparent;
-    padding: 8px 14px;
-    border-radius: 8px;
+    padding: 9px 16px;
+    border-radius: 9px;
     cursor: pointer;
-    font-weight: 550;
+    font-weight: 580;
     color: var(--muted);
-    transition: background .15s, color .15s;
+    transition: background .2s var(--ease-spring), color .2s, box-shadow .2s;
   }
   .mode-toggle button.active {
     background: #fff;
-    color: var(--ink);
-    box-shadow: 0 1px 2px rgba(16,24,40,.08);
+    color: var(--accent);
+    box-shadow: 0 1px 3px rgba(20,24,45,.12);
   }
-  input[type="number"].amount { width: 92px; }
+  input[type="number"].amount { width: 96px; }
   .generate {
-    background: var(--accent);
+    position: relative;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
     color: #fff;
     border: none;
-    padding: 12px 26px;
-    border-radius: 11px;
+    padding: 13px 30px;
+    border-radius: 12px;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 640;
+    letter-spacing: 0.01em;
     cursor: pointer;
-    transition: filter .15s, transform .05s;
+    box-shadow: 0 6px 16px rgba(79,70,229,.30), inset 0 1px 0 rgba(255,255,255,.20);
+    transition: transform .12s var(--ease-spring), box-shadow .2s, filter .2s;
   }
-  .generate:hover { filter: brightness(1.07); }
-  .generate:active { transform: translateY(1px); }
-  .generate:disabled { opacity: .5; cursor: not-allowed; }
+  .generate:hover { transform: translateY(-2px); box-shadow: 0 11px 24px rgba(79,70,229,.36), inset 0 1px 0 rgba(255,255,255,.24); }
+  .generate:active { transform: translateY(0); }
+  .generate:disabled { cursor: default; filter: saturate(.7) brightness(.98); transform: none; box-shadow: 0 4px 12px rgba(79,70,229,.22); }
+
   .results {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 18px;
     margin-top: 8px;
   }
   .team {
-    background: var(--card);
+    position: relative;
+    overflow: hidden;
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--team) 5%, #fff), #fff);
     border: 1px solid var(--line);
-    border-top: 4px solid var(--team, var(--accent));
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: 16px 18px;
+    padding: 18px 20px;
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(16px) scale(.97);
+    transition: transform .28s var(--ease-spring), box-shadow .28s;
   }
-  .team.show { animation: pop .35s ease forwards; }
-  @keyframes pop {
-    to { opacity: 1; transform: translateY(0); }
+  .team::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--team), color-mix(in srgb, var(--team) 55%, #fff));
   }
+  .team.show { animation: cardIn .55s var(--ease-spring) forwards; }
+  .team.rest { opacity: 1; transform: none; }
+  .team.rest:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  @keyframes cardIn { to { opacity: 1; transform: translateY(0) scale(1); } }
   .team h3 {
-    margin: 0 0 10px;
+    margin: 0 0 12px;
     font-size: 15px;
-    font-weight: 650;
+    font-weight: 670;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
   }
   .dot {
-    width: 10px; height: 10px; border-radius: 50%;
+    width: 11px; height: 11px; border-radius: 50%;
     background: var(--team, var(--accent));
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--team) 16%, transparent);
     flex: none;
   }
+  .team .meta { font-size: 12px; color: var(--muted); font-weight: 550; margin-left: auto; }
   .team ul { margin: 0; padding: 0; list-style: none; }
   .team li {
-    padding: 5px 0;
-    font-size: 14px;
-    border-bottom: 1px dashed var(--line);
+    padding: 6px 2px;
+    font-size: 14.5px;
+    border-bottom: 1px solid var(--line);
+    transition: color .2s;
   }
   .team li:last-child { border-bottom: none; }
-  .team .meta { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .team li.rolling { color: var(--muted); opacity: .55; }
+  .team li.settled { animation: settlePop .34s var(--ease-spring); }
+  @keyframes settlePop {
+    0% { opacity: .3; transform: translateX(-6px); }
+    60% { transform: translateX(1px); }
+    100% { opacity: 1; transform: none; }
+  }
   .empty {
     text-align: center;
     color: var(--muted);
-    font-size: 14px;
-    padding: 28px 0;
-  }
-  .shuffling .team { animation: shake .25s ease infinite; }
-  @keyframes shake {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
+    font-size: 14.5px;
+    padding: 36px 0;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius);
+    background: rgba(255,255,255,.4);
   }
   .toast {
     position: fixed;
-    bottom: 22px; left: 50%;
-    transform: translateX(-50%) translateY(20px);
+    bottom: 26px; left: 50%;
+    transform: translateX(-50%) translateY(24px);
     background: var(--ink);
     color: #fff;
-    padding: 9px 16px;
-    border-radius: 10px;
-    font-size: 13px;
+    padding: 11px 18px;
+    border-radius: 12px;
+    font-size: 13.5px;
+    box-shadow: var(--shadow-lg);
     opacity: 0;
     pointer-events: none;
-    transition: opacity .2s, transform .2s;
+    transition: opacity .25s var(--ease-spring), transform .25s var(--ease-spring);
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   @media (max-width: 520px) {
-    .wrap { padding: 32px 16px 60px; }
-    header.top h1 { font-size: 25px; }
+    .wrap { padding: 36px 16px 64px; }
+    header.top h1 { font-size: 27px; }
+    .options-grid { flex-direction: column; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .team.show { animation: none; }
+    .team { opacity: 1; transform: none; }
+    .team li.settled { animation: none; }
+    .toast, .generate, .team { transition: none; }
   }
 </style>
 </head>
@@ -248,7 +301,7 @@
 
   <!-- Options -->
   <section class="panel">
-    <div class="row" style="justify-content: space-between;">
+    <div class="options-grid">
       <div>
         <label class="lbl">Split by</label>
         <div class="mode-toggle" id="modeToggle">
@@ -261,7 +314,7 @@
         <input type="number" class="amount" id="amount" min="1" value="2">
       </div>
     </div>
-    <div class="row" style="margin-top: 18px;">
+    <div class="row" style="margin-top: 22px;">
       <button class="generate" id="generate">Generate teams</button>
     </div>
   </section>
@@ -285,6 +338,8 @@
     "#db2777", "#9333ea", "#ca8a04", "#0d9488",
     "#dc2626", "#2563eb", "#65a30d", "#c026d3"
   ];
+  var reduceMotion = window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // ---- State ----
   var state = load();
@@ -299,7 +354,9 @@
   var modeToggle = $("modeToggle");
   var resultsEl = $("results");
   var emptyState = $("emptyState");
+  var generateBtn = $("generate");
   var mode = "groups";
+  var busy = false;
 
   // ---- Persistence ----
   function load() {
@@ -336,9 +393,9 @@
     namesEl.value = currentList().names || "";
     updateCount();
   }
-
   function updateCount() {
-    countHint.textContent = parseNames().length + " names";
+    var n = parseNames().length;
+    countHint.textContent = n + (n === 1 ? " name" : " names");
   }
   function parseNames() {
     return namesEl.value.split("\n")
@@ -372,10 +429,7 @@
     renderListOptions();
   });
   $("deleteList").addEventListener("click", function () {
-    if (state.lists.length === 1) {
-      toast("Can't delete your only list.");
-      return;
-    }
+    if (state.lists.length === 1) { toast("Can't delete your only list."); return; }
     if (!confirm("Delete \"" + currentList().name + "\"?")) return;
     state.lists = state.lists.filter(function (l) { return l.id !== state.current; });
     state.current = state.lists[0].id;
@@ -411,14 +465,12 @@
     }
     return a;
   }
-  // Distribute people as evenly as possible into `n` teams (round-robin).
   function intoGroups(people, n) {
     var teams = [];
     for (var i = 0; i < n; i++) teams.push([]);
     people.forEach(function (p, i) { teams[i % n].push(p); });
     return teams;
   }
-  // Split into teams of given size; remainder distributed so no team is tiny.
   function bySize(people, size) {
     var n = Math.max(1, Math.ceil(people.length / size));
     return intoGroups(people, n);
@@ -426,6 +478,7 @@
 
   // ---- Generate ----
   function generate() {
+    if (busy) return;
     var people = parseNames();
     if (people.length === 0) { toast("Add some names first."); return; }
     var amount = parseInt(amountEl.value, 10);
@@ -437,7 +490,13 @@
     } else {
       teams = bySize(shuffle(people), amount);
     }
-    animateReveal(teams);
+    animateReveal(teams, people);
+  }
+
+  function setBusy(on) {
+    busy = on;
+    generateBtn.disabled = on;
+    generateBtn.textContent = on ? "Shuffling…" : "Generate teams";
   }
 
   function renderTeams(teams) {
@@ -447,32 +506,73 @@
       var card = document.createElement("div");
       card.className = "team";
       card.style.setProperty("--team", color);
-      var members = team.map(function (m) { return "<li>" + esc(m) + "</li>"; }).join("");
+      var lis = team.map(function (m) {
+        return '<li class="rolling" data-final="' + esc(m) + '">&nbsp;</li>';
+      }).join("");
       card.innerHTML =
         '<h3><span class="dot"></span>Team ' + (i + 1) +
-        ' <span class="meta">(' + team.length + ')</span></h3>' +
-        '<ul>' + members + '</ul>';
+        '<span class="meta">' + team.length + (team.length === 1 ? " person" : " people") + '</span></h3>' +
+        '<ul>' + lis + '</ul>';
       resultsEl.appendChild(card);
     });
   }
 
-  function animateReveal(teams) {
+  function animateReveal(teams, pool) {
     emptyState.style.display = "none";
     renderTeams(teams);
-    var cards = resultsEl.querySelectorAll(".team");
+    var cards = Array.prototype.slice.call(resultsEl.querySelectorAll(".team"));
 
-    // Brief "shuffle" jitter, then staggered pop-in.
-    resultsEl.classList.add("shuffling");
-    setTimeout(function () {
-      resultsEl.classList.remove("shuffling");
-      Array.prototype.forEach.call(cards, function (c, i) {
-        setTimeout(function () { c.classList.add("show"); }, i * 70);
+    if (reduceMotion) {
+      // No motion: just place final names and rest state immediately.
+      cards.forEach(function (c) { c.classList.add("rest"); });
+      Array.prototype.forEach.call(resultsEl.querySelectorAll("li"), function (li) {
+        li.textContent = li.getAttribute("data-final");
+        li.classList.remove("rolling");
       });
-    }, 450);
+      return;
+    }
+
+    setBusy(true);
+
+    // Staggered spring entrance; switch to a hover-able "rest" state when done.
+    cards.forEach(function (c, i) {
+      setTimeout(function () { c.classList.add("show"); }, i * 80);
+      c.addEventListener("animationend", function onEnd(e) {
+        if (e.animationName === "cardIn") {
+          c.classList.remove("show");
+          c.classList.add("rest");
+          c.removeEventListener("animationend", onEnd);
+        }
+      });
+    });
+
+    // Slot-machine settle: lines scramble through the pool, then lock one by one.
+    var lis = Array.prototype.slice.call(resultsEl.querySelectorAll("li"));
+    var settleBase = 360, perLine = 55;
+    lis.forEach(function (li, i) { li._settleAt = settleBase + i * perLine; });
+
+    var start = performance.now();
+    var tick = setInterval(function () {
+      var now = performance.now() - start;
+      var allDone = true;
+      lis.forEach(function (li) {
+        if (li._settled) return;
+        if (now >= li._settleAt) {
+          li.textContent = li.getAttribute("data-final");
+          li.classList.remove("rolling");
+          li.classList.add("settled");
+          li._settled = true;
+        } else {
+          allDone = false;
+          li.textContent = pool[Math.floor(Math.random() * pool.length)];
+        }
+      });
+      if (allDone) { clearInterval(tick); setBusy(false); }
+    }, 60);
   }
 
   function esc(s) {
-    return s.replace(/[&<>"']/g, function (c) {
+    return String(s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
@@ -487,7 +587,7 @@
     toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2200);
   }
 
-  $("generate").addEventListener("click", generate);
+  generateBtn.addEventListener("click", generate);
 
   // ---- Init ----
   renderListOptions();
