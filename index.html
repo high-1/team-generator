@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Generator</title>
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --card: #ffffff;
+    --ink: #1a1d23;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --accent: #4f46e5;
+    --accent-soft: #eef2ff;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.06);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  header.top {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  header.top h1 {
+    font-size: 30px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px;
+  }
+  header.top p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px;
+    margin-bottom: 20px;
+  }
+  .row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .row + .row { margin-top: 14px; }
+  label.lbl {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 8px;
+  }
+  select, input[type="number"], input[type="text"], button, textarea {
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  select, input[type="number"], input[type="text"] {
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: #fff;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  select:focus, input:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .list-controls select { flex: 1; min-width: 180px; }
+  .icon-btn {
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 9px;
+    padding: 9px 12px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: background .15s, color .15s, border-color .15s;
+    white-space: nowrap;
+  }
+  .icon-btn:hover { background: var(--bg); color: var(--ink); }
+  textarea {
+    width: 100%;
+    min-height: 170px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    resize: vertical;
+    outline: none;
+    line-height: 1.7;
+  }
+  .count-hint {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .mode-toggle {
+    display: inline-flex;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 3px;
+    gap: 3px;
+  }
+  .mode-toggle button {
+    border: none;
+    background: transparent;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 550;
+    color: var(--muted);
+    transition: background .15s, color .15s;
+  }
+  .mode-toggle button.active {
+    background: #fff;
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(16,24,40,.08);
+  }
+  input[type="number"].amount { width: 92px; }
+  .generate {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 12px 26px;
+    border-radius: 11px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter .15s, transform .05s;
+  }
+  .generate:hover { filter: brightness(1.07); }
+  .generate:active { transform: translateY(1px); }
+  .generate:disabled { opacity: .5; cursor: not-allowed; }
+  .results {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .team {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--team, var(--accent));
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px 18px;
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  .team.show { animation: pop .35s ease forwards; }
+  @keyframes pop {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .team h3 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    font-weight: 650;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--team, var(--accent));
+    flex: none;
+  }
+  .team ul { margin: 0; padding: 0; list-style: none; }
+  .team li {
+    padding: 5px 0;
+    font-size: 14px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .team li:last-child { border-bottom: none; }
+  .team .meta { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    padding: 28px 0;
+  }
+  .shuffling .team { animation: shake .25s ease infinite; }
+  @keyframes shake {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  .toast {
+    position: fixed;
+    bottom: 22px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: #fff;
+    padding: 9px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s, transform .2s;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  @media (max-width: 520px) {
+    .wrap { padding: 32px 16px 60px; }
+    header.top h1 { font-size: 25px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Team Generator</h1>
+    <p>Drop in names, pick how to split them, and shuffle.</p>
+  </header>
+
+  <!-- List management -->
+  <section class="panel">
+    <label class="lbl">Saved lists</label>
+    <div class="row list-controls">
+      <select id="listSelect" aria-label="Select a saved list"></select>
+      <button class="icon-btn" id="newList">+ New</button>
+      <button class="icon-btn" id="renameList">Rename</button>
+      <button class="icon-btn" id="deleteList">Delete</button>
+    </div>
+  </section>
+
+  <!-- Names -->
+  <section class="panel">
+    <label class="lbl" for="names">Names — one per line</label>
+    <textarea id="names" placeholder="Avery&#10;Blake&#10;Casey&#10;Drew&#10;Emerson"></textarea>
+    <div class="count-hint" id="countHint">0 names</div>
+  </section>
+
+  <!-- Options -->
+  <section class="panel">
+    <div class="row" style="justify-content: space-between;">
+      <div>
+        <label class="lbl">Split by</label>
+        <div class="mode-toggle" id="modeToggle">
+          <button data-mode="groups" class="active">Number of teams</button>
+          <button data-mode="size">People per team</button>
+        </div>
+      </div>
+      <div>
+        <label class="lbl" id="amountLabel">How many teams?</label>
+        <input type="number" class="amount" id="amount" min="1" value="2">
+      </div>
+    </div>
+    <div class="row" style="margin-top: 18px;">
+      <button class="generate" id="generate">Generate teams</button>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section id="resultsWrap">
+    <div class="empty" id="emptyState">Your teams will appear here.</div>
+    <div class="results" id="results"></div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var LS_KEY = "teamgen.v1";
+  var palette = [
+    "#4f46e5", "#0891b2", "#16a34a", "#ea580c",
+    "#db2777", "#9333ea", "#ca8a04", "#0d9488",
+    "#dc2626", "#2563eb", "#65a30d", "#c026d3"
+  ];
+
+  // ---- State ----
+  var state = load();
+
+  // ---- Elements ----
+  var $ = function (id) { return document.getElementById(id); };
+  var listSelect = $("listSelect");
+  var namesEl = $("names");
+  var countHint = $("countHint");
+  var amountEl = $("amount");
+  var amountLabel = $("amountLabel");
+  var modeToggle = $("modeToggle");
+  var resultsEl = $("results");
+  var emptyState = $("emptyState");
+  var mode = "groups";
+
+  // ---- Persistence ----
+  function load() {
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed && parsed.lists && parsed.lists.length) return parsed;
+      }
+    } catch (e) {}
+    var id = uid();
+    return { lists: [{ id: id, name: "My List", names: "" }], current: id };
+  }
+  function save() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  function uid() { return "l" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function currentList() {
+    return state.lists.filter(function (l) { return l.id === state.current; })[0] || state.lists[0];
+  }
+
+  // ---- Rendering list controls ----
+  function renderListOptions() {
+    listSelect.innerHTML = "";
+    state.lists.forEach(function (l) {
+      var opt = document.createElement("option");
+      opt.value = l.id;
+      opt.textContent = l.name;
+      if (l.id === state.current) opt.selected = true;
+      listSelect.appendChild(opt);
+    });
+  }
+  function loadCurrentIntoEditor() {
+    namesEl.value = currentList().names || "";
+    updateCount();
+  }
+
+  function updateCount() {
+    countHint.textContent = parseNames().length + " names";
+  }
+  function parseNames() {
+    return namesEl.value.split("\n")
+      .map(function (s) { return s.trim(); })
+      .filter(function (s) { return s.length; });
+  }
+
+  // ---- Events: list management ----
+  listSelect.addEventListener("change", function () {
+    state.current = listSelect.value;
+    save();
+    loadCurrentIntoEditor();
+  });
+  $("newList").addEventListener("click", function () {
+    var name = prompt("Name this list:", "List " + (state.lists.length + 1));
+    if (name === null) return;
+    name = name.trim() || ("List " + (state.lists.length + 1));
+    var id = uid();
+    state.lists.push({ id: id, name: name, names: "" });
+    state.current = id;
+    save();
+    renderListOptions();
+    loadCurrentIntoEditor();
+  });
+  $("renameList").addEventListener("click", function () {
+    var l = currentList();
+    var name = prompt("Rename list:", l.name);
+    if (name === null) return;
+    l.name = name.trim() || l.name;
+    save();
+    renderListOptions();
+  });
+  $("deleteList").addEventListener("click", function () {
+    if (state.lists.length === 1) {
+      toast("Can't delete your only list.");
+      return;
+    }
+    if (!confirm("Delete \"" + currentList().name + "\"?")) return;
+    state.lists = state.lists.filter(function (l) { return l.id !== state.current; });
+    state.current = state.lists[0].id;
+    save();
+    renderListOptions();
+    loadCurrentIntoEditor();
+  });
+
+  // ---- Events: editing names (auto-save) ----
+  namesEl.addEventListener("input", function () {
+    currentList().names = namesEl.value;
+    updateCount();
+    save();
+  });
+
+  // ---- Events: mode toggle ----
+  Array.prototype.forEach.call(modeToggle.querySelectorAll("button"), function (btn) {
+    btn.addEventListener("click", function () {
+      mode = btn.getAttribute("data-mode");
+      Array.prototype.forEach.call(modeToggle.querySelectorAll("button"), function (b) {
+        b.classList.toggle("active", b === btn);
+      });
+      amountLabel.textContent = mode === "groups" ? "How many teams?" : "People per team?";
+    });
+  });
+
+  // ---- Grouping logic ----
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  // Distribute people as evenly as possible into `n` teams (round-robin).
+  function intoGroups(people, n) {
+    var teams = [];
+    for (var i = 0; i < n; i++) teams.push([]);
+    people.forEach(function (p, i) { teams[i % n].push(p); });
+    return teams;
+  }
+  // Split into teams of given size; remainder distributed so no team is tiny.
+  function bySize(people, size) {
+    var n = Math.max(1, Math.ceil(people.length / size));
+    return intoGroups(people, n);
+  }
+
+  // ---- Generate ----
+  function generate() {
+    var people = parseNames();
+    if (people.length === 0) { toast("Add some names first."); return; }
+    var amount = parseInt(amountEl.value, 10);
+    if (isNaN(amount) || amount < 1) { toast("Enter a number of 1 or more."); return; }
+
+    var teams;
+    if (mode === "groups") {
+      teams = intoGroups(shuffle(people), Math.min(amount, people.length));
+    } else {
+      teams = bySize(shuffle(people), amount);
+    }
+    animateReveal(teams);
+  }
+
+  function renderTeams(teams) {
+    resultsEl.innerHTML = "";
+    teams.forEach(function (team, i) {
+      var color = palette[i % palette.length];
+      var card = document.createElement("div");
+      card.className = "team";
+      card.style.setProperty("--team", color);
+      var members = team.map(function (m) { return "<li>" + esc(m) + "</li>"; }).join("");
+      card.innerHTML =
+        '<h3><span class="dot"></span>Team ' + (i + 1) +
+        ' <span class="meta">(' + team.length + ')</span></h3>' +
+        '<ul>' + members + '</ul>';
+      resultsEl.appendChild(card);
+    });
+  }
+
+  function animateReveal(teams) {
+    emptyState.style.display = "none";
+    renderTeams(teams);
+    var cards = resultsEl.querySelectorAll(".team");
+
+    // Brief "shuffle" jitter, then staggered pop-in.
+    resultsEl.classList.add("shuffling");
+    setTimeout(function () {
+      resultsEl.classList.remove("shuffling");
+      Array.prototype.forEach.call(cards, function (c, i) {
+        setTimeout(function () { c.classList.add("show"); }, i * 70);
+      });
+    }, 450);
+  }
+
+  function esc(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  // ---- Toast ----
+  var toastTimer;
+  function toast(msg) {
+    var t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2200);
+  }
+
+  $("generate").addEventListener("click", generate);
+
+  // ---- Init ----
+  renderListOptions();
+  loadCurrentIntoEditor();
+})();
+</script>
+</body>
+</html>
